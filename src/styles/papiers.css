@@ -1,0 +1,128 @@
+main {
+    display: grid;
+    grid-template-areas: 
+    "top top"
+    "filters content";
+    gap: 1.25rem;
+    grid-template-columns: 12.375rem 1fr;
+}
+
+.top {
+    grid-area: top;
+}
+
+.filters {
+    grid-area: filters
+}
+
+.layout-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.new-paper-button,
+.layout-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color .3s, transform .05s;
+}
+
+.layout-button {
+    background-color: #ECF3F9;
+}
+
+.layout-button:hover {
+    background-color: #DEE6EE;
+}
+
+.layout-button:active,
+.new-paper-button:active {
+    transform: scale(.95);
+}
+
+.layout-button img {
+    width: 2.5rem;
+    height: 2rem;
+}
+
+.layout-button.layout-button--selected {
+    background-color: #DEE6EE;
+}
+
+.new-paper-button {
+    background-color: #0080ff;
+    color: white;
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.new-paper-button:hover {
+    background-color: #0067ce;
+}
+
+.pagination {
+    width: 80%;
+    margin: 0;
+    padding: 0;
+    font-size: .75rem;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.pagination .pagination__disabled a {
+    background-color: #1e49748c;
+    border-color: #1e49748c;
+    cursor: not-allowed;
+}
+
+.pagination .pagination__active a {
+    background-color: #007FFF;
+    color: white;
+}
+
+.pagination__next a,
+.pagination__previous a {
+    display: inline-block;
+    padding: .75em 1.5em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #007FFF;
+    border-radius: .25em;
+    background-color: #007FFF;
+    cursor: pointer;
+    text-transform: capitalize;
+    color: white;
+}
+
+.pagination__break a {
+    display: inline-block;
+    color: #007FFF;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.pagination__page a {
+    display: inline-block;
+    padding: .75em 1.5em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #007FFF;
+    border-radius: .25em;
+    color: #007FFF;
+    transition: color .3s;
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.pagination__page a:hover {
+    background-color: #007FFF;
+    color: white;
+}

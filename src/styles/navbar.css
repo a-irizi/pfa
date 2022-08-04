@@ -1,0 +1,107 @@
+.nav {
+  height: 4rem;
+  padding-left: 2.8rem;
+  padding-right: 2.8rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--main-bg-color);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.25);
+}
+
+.nav__title {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  flex: 1;
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 2rem;
+}
+
+.nav__button,
+.nav__link {
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.nav__link {
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav__link a {
+  color: #6e8dab;
+  text-decoration: none;
+}
+
+.nav__link:hover a {
+  color: var(--primary-color);
+}
+
+.nav__link__indicator {
+  width: 120%;
+  height: 0.25rem;
+  background-color: var(--primary-color);
+  position: absolute;
+  bottom: -1.36rem;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav__button-group {
+  margin-left: 3rem;
+}
+
+.nav__link.nav__link--active a {
+  color: var(--primary-color);
+}
+
+.nav__link.nav__link--active .nav__link__indicator {
+  opacity: 1;
+}
+
+.nav__button {
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1rem;
+  padding-top: 0.611em;
+  padding-bottom: 0.611em;
+  padding-left: 1.6em;
+  padding-right: 1.6em;
+  background-color: #ecf3f9;
+  cursor: pointer;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  transition: background-color 0.3s, transfrom .15s, color 0.3s;
+}
+
+
+.nav__button.nav__button--outline {
+    background-color: white;
+    color: var(--primary-color);
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--primary-color);
+}
+
+.nav__button.nav__button--outline:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.nav__button.nav__button--outline:active {
+    transform: scale(.95);
+}
