@@ -66,6 +66,10 @@ main {
     background-color: #0067ce;
 }
 
+.papers {
+    width: 100%;
+}
+
 .pagination {
     width: 80%;
     margin: 0;

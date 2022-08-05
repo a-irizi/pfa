@@ -1,0 +1,51 @@
+.papersTable {
+    width: 100%;
+    overflow: hidden;
+    border-collapse: collapse;
+    border: none;
+    border-radius: .5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 0.625rem 0.125rem rgba(0, 0, 0, 0.25);
+}
+
+.papersTable__header {
+    background-color: #007FFF;
+    height: 3rem;
+}
+
+.papersTable__header th {
+    text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    color: white;
+    font-family: "inter";
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-transform: capitalize;
+}
+
+.papersTable__body tr {
+    background-color: #F8F8F8;
+    height: 3rem;
+    transition: background-color .15s;
+    font-family: "roboto";
+    
+}
+
+.papersTable__body tr:hover {
+    background-color: rgb(219, 219, 219);
+}
+
+.papersTable__body tr td {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
+    font-size: .75rem;
+    letter-spacing: 5%;
+    text-transform: capitalize;
+}
+
+
+.papersTable__link {
+    color: rgba(23, 85, 148, 1);
+}

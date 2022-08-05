@@ -16,24 +16,26 @@ import validateLogo from "../images/validate.svg";
 import Checkbox from "../components/Checkbox";
 import PaperCard from "../components/PaperCard";
 import Radio from "../components/Radio";
+import PaperTable from "../components/PaperTable";
+import NewPaperModal from "../components/NewPaperModal";
 
 const Papiers = () => {
   const [papers, setPapers] = useState(data);
-  const [pageNumber, setPageNumber] = useState(0);
 
-  const elementsPerPage = 5;
-  const elementsVisited = pageNumber * elementsPerPage;
-  const elementsOnDisplay = papers.slice(elementsVisited, elementsVisited + elementsPerPage)
-  const pageCount = Math.ceil(papers.length / elementsPerPage)
-  function changePage({selected}) {
-    setPageNumber(selected)
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  function toggleModel() {
+    setIsModalVisible(!isModalVisible);
   }
+
 
   const [filters, setFilters] = useState({
     myPapers: false,
-    validePapers: false,
+    paperStatus: "any",
+    rejectedPapers: false,
+    inProgressPapers: false,
     authorType: "any",
-    nameOrEmail: "",
+    nameOrEmailOrTitle: "",
     paperType: "any",
   });
 
@@ -51,17 +53,34 @@ const Papiers = () => {
 
   function checkFilter(paper) {
     return (
-      (substring(paper.author.email, filters.nameOrEmail) ||
+      (substring(paper.author.email, filters.nameOrEmailOrTitle) ||
         substring(
           `${paper.author.firstName} ${paper.author.lastName}`,
-          filters.nameOrEmail
-        )) &&
+          filters.nameOrEmailOrTitle
+        ) ||
+        substring(paper.title, filters.nameOrEmailOrTitle)) &&
       (!filters.myPapers || paper.author.email === "johndoe@example.com") &&
-      (!filters.validePapers || paper.status === "valide") &&
+      (filters.paperStatus === "any" || paper.status === filters.paperStatus) &&
       (filters.authorType === "any" ||
         paper.author.type === filters.authorType) &&
       (filters.paperType === "any" || paper.type === filters.paperType)
     );
+  }
+
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const elementsPerPage = 6;
+  const elementsVisited = pageNumber * elementsPerPage;
+  const elementsOnDisplay = papers.slice(
+    elementsVisited,
+    elementsVisited + elementsPerPage
+  );
+  const pageCount = Math.ceil(
+    papers.filter(checkFilter).length / elementsPerPage
+  );
+
+  function changePage({ selected }) {
+    setPageNumber(selected);
   }
 
   const cards = elementsOnDisplay.map(
@@ -80,6 +99,13 @@ const Papiers = () => {
           coauthors={paper.coauthors ? paper.coauthors : []}
         />
       )
+  );
+
+  const table = (
+    <PaperTable
+      header={["nom", "type", "auteur", "actions"]}
+      rows={elementsOnDisplay.filter(checkFilter)}
+    />
   );
 
   function changeFilter(event) {
@@ -129,16 +155,17 @@ const Papiers = () => {
         </div>
         <input
           type="text"
-          name="nameOrEmail"
-          placeholder="Chercher par nom ou par email"
+          name="nameOrEmailOrTitle"
+          placeholder="Chercher par nom, email ou par titre"
           onFocus={(e) => (e.target.placeholder = "")}
           onBlur={(e) =>
-            (e.target.placeholder = "Chercher par nom ou par email")
+            (e.target.placeholder = "Chercher par nom, email ou par titre")
           }
-          value={filters.nameOrEmail}
+          value={filters.nameOrEmailOrTitle}
           onChange={changeFilter}
         />
-        <button className="new-paper-button">+</button>
+        <button onClick={toggleModel} className="new-paper-button">+</button>
+        <NewPaperModal isModalVisible={isModalVisible} visibilityToggler={toggleModel}/>
       </div>
       <div className="filters container container--top container--space-between">
         <div className="container container--column container--gap">
@@ -150,14 +177,45 @@ const Papiers = () => {
             checked={filters.myPapers}
             label="mes papiers"
           />
-          <Checkbox
-            key={`validePapers${filters.validePapers}`}
-            id="validePapers"
-            name="validePapers"
-            onChange={changeFilter}
-            checked={filters.validePapers}
-            label="validé"
-          />
+          <fieldset className="container container--column container--gap-m">
+            <legend>Etat du Papier</legend>
+            <Radio
+              key="paperStatusAny"
+              id="paper-status-any"
+              name="paperStatus"
+              onChange={changeFilter}
+              value="any"
+              checkeString={filters.paperStatus}
+              label="Tous"
+            />
+            <Radio
+              key="paperStatusValide"
+              id="paper-status-valide"
+              name="paperStatus"
+              onChange={changeFilter}
+              value="valide"
+              checkeString={filters.paperStatus}
+              label="Validé"
+            />
+            <Radio
+              key="paperStatusPending"
+              id="paper-status-pending"
+              name="paperStatus"
+              onChange={changeFilter}
+              value="pending"
+              checkeString={filters.paperStatus}
+              label="En attente"
+            />
+            <Radio
+              key="paperStatusRejected"
+              id="paper-status-rejected"
+              name="paperStatus"
+              onChange={changeFilter}
+              value="rejected"
+              checkeString={filters.paperStatus}
+              label="rejeté"
+            />
+          </fieldset>
           <fieldset className="container container--column container--gap-m">
             <legend>Type d'auteur</legend>
             <Radio
@@ -239,24 +297,29 @@ const Papiers = () => {
         </div>
       </div>
       <div className="content container container--column container--center container--gap">
-      <div className="grid grid--2 grid--gap-medium grdi--fit-content">
-        {cards}
+        {layout.style === "grid" ? (
+          <div className="papers grid grid--2 grid--gap-medium grid--fit-content">
+            {cards}
+          </div>
+        ) : (
+          <div className="papers">{table}</div>
+        )}
+        {pageCount > 1 && (
+          <ReactPaginate
+            previousLabel="précédent"
+            nextLabel="suivant"
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName="pagination"
+            pageClassName="pagination__page"
+            activeClassName="pagination__active"
+            previousClassName="pagination__previous"
+            nextClassName="pagination__next"
+            disabledClassName="pagination__disabled"
+            breakClassName="pagination__break"
+          />
+        )}
       </div>
-      <ReactPaginate
-          previousLabel="précédent"
-          nextLabel="suivant"
-          pageCount={pageCount}
-          onPageChange={changePage}
-          containerClassName="pagination"
-          pageClassName="pagination__page"
-          activeClassName="pagination__active"
-          previousClassName="pagination__previous"
-          nextClassName="pagination__next"
-          disabledClassName="pagination__disabled"
-          breakClassName="pagination__break"
-        />
-      </div>
-
     </main>
   );
 };
