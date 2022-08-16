@@ -1,0 +1,81 @@
+.multi-step-form {
+  display: grid;
+  grid-template-areas:
+    "progressbar"
+    "form"
+    "buttons";
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  height: 100%;
+}
+
+.multi-step-form__progress-bar {
+  margin-bottom: 1rem;
+  grid-area: progressbar;
+  padding-left: 1.3rem;
+  padding-right: 1.3rem;
+  padding-top: 0.5rem;
+}
+
+.prograssbar__step {
+  width: 2.6rem;
+  height: 2.6rem;
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(82, 96, 110);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 600;
+}
+
+.prograssbar__step.prograssbar__step--accomplished {
+  background-color: rgb(0, 128, 255);
+}
+
+.multi-step-form__form {
+  grid-area: form;
+  overflow: auto;
+}
+
+.multi-step-form__buttons {
+  grid-area: buttons;
+}
+
+.multi-step-form__button {
+    padding: .7rem 1.5rem;
+    margin-right: 1rem;
+    text-transform: capitalize;
+    font-weight: 600;
+    border: none;
+    border-radius: .25rem;
+    cursor: pointer;
+    transition: background-color .3s, transform .3s;
+    background-color: rgba(0, 127, 255, 1);
+    color: white;
+    font-size: 1.1rem;
+}
+
+.multi-step-form__button:hover {
+    background-color: rgb(0, 99, 197);
+}
+
+.multi-step-form__button:active {
+    transform: scale(.95);
+}
+
+.multi-step-form__button:disabled,
+.multi-step-form__button[disabled] {
+    cursor: default;
+    pointer-events: none;
+    opacity: .5;
+}
+
+.multi-step-form__button--next {
+
+}
+
+.multi-step-form__button--previous {
+
+}

@@ -18,16 +18,19 @@ import PaperCard from "../components/PaperCard";
 import Radio from "../components/Radio";
 import PaperTable from "../components/PaperTable";
 import NewPaperModal from "../components/NewPaperModal";
+import { useSelector } from "react-redux";
 
 const Papiers = () => {
-  const [papers, setPapers] = useState(data);
+  const papers = useSelector((store) => store.papers);
+  const researchers = useSelector(
+    (store) => store.researchers
+  );
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   function toggleModel() {
     setIsModalVisible(!isModalVisible);
   }
-
 
   const [filters, setFilters] = useState({
     myPapers: false,
@@ -52,17 +55,20 @@ const Papiers = () => {
   }
 
   function checkFilter(paper) {
+    const [ author ] = researchers.filter((r) => (r.id === paper.authorId));
+    const coauthors = researchers.filter((r) =>
+      paper.coauthorsId.includes(r.id)
+    );
     return (
-      (substring(paper.author.email, filters.nameOrEmailOrTitle) ||
+      (substring(author.email, filters.nameOrEmailOrTitle) ||
         substring(
-          `${paper.author.firstName} ${paper.author.lastName}`,
+          `${author.firstName} ${author.lastName}`,
           filters.nameOrEmailOrTitle
         ) ||
         substring(paper.title, filters.nameOrEmailOrTitle)) &&
-      (!filters.myPapers || paper.author.email === "johndoe@example.com") &&
+      (!filters.myPapers || author.email === "johndoe@example.com") &&
       (filters.paperStatus === "any" || paper.status === filters.paperStatus) &&
-      (filters.authorType === "any" ||
-        paper.author.type === filters.authorType) &&
+      (filters.authorType === "any" || author.type === filters.authorType) &&
       (filters.paperType === "any" || paper.type === filters.paperType)
     );
   }
@@ -83,23 +89,28 @@ const Papiers = () => {
     setPageNumber(selected);
   }
 
-  const cards = elementsOnDisplay.map(
-    (paper) =>
+  const cards = elementsOnDisplay.map(function (paper) {
+    const [author] = researchers.filter((r) => (r.id === paper.authorId));
+    const coauthors = researchers.filter((r) =>
+      paper.coauthorsId.includes(r.id)
+    );
+    return (
       checkFilter(paper) && (
         <PaperCard
-          key={paper.id}
-          firstName={paper.author.firstName}
-          lastName={paper.author.lastName}
-          profileImage={paper.author.profile}
-          authorPageLink={paper.author.pageLink}
+          key={`${paper.id}-${author.id}`}
+          firstName={author.firstName}
+          lastName={author.lastName}
+          profileImage={author.profile}
+          authorPageLink={author.pageLink}
           type={paper.type}
           releaseDate={paper.releaseDate}
           title={paper.title}
           paperPageLink={paper.pageLink}
-          coauthors={paper.coauthors ? paper.coauthors : []}
+          coauthors={coauthors}
         />
       )
-  );
+    );
+  });
 
   const table = (
     <PaperTable
@@ -124,7 +135,6 @@ const Papiers = () => {
     }
   }
 
-  console.log(filters);
   return (
     <main>
       <div className="top container container--center container--space-between">
@@ -164,8 +174,13 @@ const Papiers = () => {
           value={filters.nameOrEmailOrTitle}
           onChange={changeFilter}
         />
-        <button onClick={toggleModel} className="new-paper-button">+</button>
-        <NewPaperModal isModalVisible={isModalVisible} visibilityToggler={toggleModel}/>
+        <button onClick={toggleModel} className="new-paper-button">
+          +
+        </button>
+        <NewPaperModal
+          isModalVisible={isModalVisible}
+          visibilityToggler={toggleModel}
+        />
       </div>
       <div className="filters container container--top container--space-between">
         <div className="container container--column container--gap">
