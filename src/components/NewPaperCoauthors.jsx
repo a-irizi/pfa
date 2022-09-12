@@ -11,13 +11,14 @@ const NewPaperCoauthors = ({
 }) => {
   const userId = useSelector((store) => store.userId);
   const researchers = useSelector((store) => store.researchers);
-  const [user] = researchers.filter((r) => r.id === userId)
+  const [user] = researchers.filter((r) => r.id === userId);
   const previouslyWorkedWith = researchers
     .filter((researcher) => user.previouslyWorkedWith.includes(researcher.id))
     .filter((researcher) => !generalPaper.coauthorsId.includes(researcher.id));
   const neverWorkedWith = researchers
     .filter((researcher) => !user.previouslyWorkedWith.includes(researcher.id))
-    .filter((researcher) => !generalPaper.coauthorsId.includes(researcher.id)).filter((researcher) => researcher.id !== user.id);
+    .filter((researcher) => !generalPaper.coauthorsId.includes(researcher.id))
+    .filter((researcher) => researcher.id !== user.id);
 
   function sortFunction(str1, str2) {
     const name1 = `${str1.firstName} ${str1.lastName}`;
@@ -186,7 +187,7 @@ const NewPaperCoauthors = ({
                 color: "rgba(28, 56, 84, 1)",
               }}
             >
-              Previously Worked With
+              Déjà Travaillé Avec
             </div>
             <div style={workedWithStyle}>{previouslyWorkedWithChoices}</div>
           </div>
@@ -199,7 +200,7 @@ const NewPaperCoauthors = ({
                 color: "rgba(28, 56, 84, 1)",
               }}
             >
-              never Worked With
+              Jamais Travaillé Avec
             </div>
             <div style={neverWorkedWithStyle}>{neverWorkedWithChoices}</div>
           </div>
@@ -212,7 +213,7 @@ const NewPaperCoauthors = ({
                 color: "rgba(28, 56, 84, 1)",
               }}
             >
-              coauthors
+              coautheurs
             </div>
             <div style={selectedContainer}>{selectedChoices}</div>
           </div>

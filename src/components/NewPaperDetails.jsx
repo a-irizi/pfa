@@ -15,7 +15,15 @@ const NewPaperDetails = ({
     switch (generalPaper.type) {
       case "revue":
         return (
-          <>
+          <div
+            style={{
+              overflow: "auto",
+              flex: "1",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              columnGap: "1rem",
+            }}
+          >
             <div style={{ gridColumn: "1/3" }}>
               <label htmlFor="magazineName-id">Nom du Journal</label>
               <input
@@ -82,11 +90,19 @@ const NewPaperDetails = ({
                 style={{ width: "100%" }}
               />
             </div>
-          </>
+          </div>
         );
       case "chapitre":
         return (
-          <>
+          <div
+            style={{
+              overflow: "auto",
+              flex: "1",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              columnGap: "1rem",
+            }}
+          >
             <div style={{ gridColumn: "1/3" }}>
               <label htmlFor="bookName-id">Nom d'Ouvrage</label>
               <input
@@ -154,11 +170,19 @@ const NewPaperDetails = ({
                 style={{ width: "100%" }}
               />
             </div>
-          </>
+          </div>
         );
       case "communication":
         return (
-          <>
+          <div
+            style={{
+              overflow: "auto",
+              flex: "1",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              columnGap: "1rem",
+            }}
+          >
             <div style={{ gridColumn: "1/3" }}>
               <label htmlFor="conferenceName-id">Nom du Conférence</label>
               <input
@@ -226,12 +250,20 @@ const NewPaperDetails = ({
                 style={{ width: "100%" }}
               />
             </div>
-          </>
+          </div>
         );
 
       case "workshop":
         return (
-          <>
+          <div
+            style={{
+              overflow: "auto",
+              flex: "1",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              columnGap: "1rem",
+            }}
+          >
             <div style={{ gridColumn: "1/3" }}>
               <label htmlFor="conferenceName-id">Nom du Conférence</label>
               <input
@@ -299,11 +331,30 @@ const NewPaperDetails = ({
                 style={{ width: "100%" }}
               />
             </div>
-          </>
+          </div>
         );
 
       default:
-        return "";
+        return (
+          <div
+            style={{
+              flex: "1",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{
+                color: "#4766817d",
+                fontWeight: "600",
+                fontSize: "1.25rem",
+              }}
+            >
+              Selectioner le type
+            </span>
+          </div>
+        );
     }
   }
 
@@ -372,20 +423,7 @@ const NewPaperDetails = ({
             </option>
           </select>
         </div>
-        <div
-          style={{
-            overflow: "auto",
-            flex: "1",
-            // borderStyle: "solid",
-            // borderColor: "rgba(128, 128, 128, 1)",
-            // borderWidth: "2px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            columnGap: "1rem",
-          }}
-        >
-          {renderSwitch()}
-        </div>
+        {renderSwitch()}
       </div>
       <div className="modal__buttons">
         <div style={{ display: "flex", gap: ".5rem" }}>

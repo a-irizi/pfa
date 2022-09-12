@@ -199,9 +199,13 @@ label {
 .container.container--gap-m {
   gap: 1rem;
 }
+.container.container--gap-medium {
+  gap: 1.625rem;
+}
+
 
 .container.container--gap-s {
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .container.container--center {
@@ -232,6 +236,13 @@ label {
 .grid.grid--2 {
   grid-template-columns: 1fr 1fr;
 }
+.grid.grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.grid.grid--4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
 
 .grid.grid--fit-content {
   height: fit-content;

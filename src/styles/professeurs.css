@@ -1,22 +1,19 @@
 /* main {
     display: grid;
     grid-template-areas: 
-    "top top"
-    "filters content";
+    "top"
+    "content";
     gap: 1.25rem;
     grid-template-columns: 12.375rem 1fr;
 } */
 
 .top {
     grid-area: top;
+    width: 100%;
 }
 
-.filters {
-    grid-area: filters;
-}
 .content {
     grid-area: content;
-
 }
 
 .layout-buttons {

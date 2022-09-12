@@ -9,7 +9,7 @@ const initialState = [
     releaseDate: "2022-01-01",
     title: "Titre papier",
     pageLink: "#",
-    status: "valide",
+    status: "valid",
     coauthorsId: [],
   },
   {
@@ -80,7 +80,7 @@ const initialState = [
     releaseDate: "2022-01-08",
     title: "Titre revue",
     pageLink: "#",
-    status: "valide",
+    status: "valid",
     coauthorsId: [],
   },
   {
@@ -90,7 +90,7 @@ const initialState = [
     releaseDate: "2022-01-09",
     title: "Titre papier",
     pageLink: "#",
-    status: "valide",
+    status: "valid",
     coauthorsId: [],
   },
   {
@@ -131,7 +131,7 @@ const initialState = [
     title: "Titre papier",
     pageLink: "#",
     status: "pending",
-    coauthorsId: [],
+    coauthorsId: [2, 3],
   },
   {
     id: 14,
@@ -160,7 +160,7 @@ const initialState = [
     releaseDate: "2022-01-16",
     title: "Titre revue",
     pageLink: "#",
-    status: "valide",
+    status: "valid",
     coauthorsId: [],
   },
 ];
@@ -184,9 +184,31 @@ const papersSlice = createSlice({
         Date(a.releaseDate) < Date(b.releaseDate) ? 1 : -1
       );
     },
+    deletePaper: (state, { payload }) => {
+      const paperIndex = state.findIndex((p) => p.id === payload);
+      state.splice(paperIndex, 1);
+    },
+    updatePaper: (state, { payload }) => {
+      let paperIndex = state.findIndex((p) => p.id === payload.id);
+      state.splice(paperIndex, 1, payload);
+    },
+    validatePaper: (state, { payload }) => {
+      const paper = state.find((p) => p.id === payload);
+      paper.status = "valid";
+    },
+    rejectPaper: (state, { payload }) => {
+      const paper = state.find((p) => p.id === payload);
+      paper.status = "rejected";
+    },
   },
 });
 
-export const { addPaper } = papersSlice.actions;
+export const {
+  addPaper,
+  deletePaper,
+  updatePaper,
+  validatePaper,
+  rejectPaper,
+} = papersSlice.actions;
 
 export default papersSlice.reducer;

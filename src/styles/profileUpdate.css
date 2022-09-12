@@ -1,0 +1,11 @@
+.profile-image__container {
+  width: 4rem;
+  height: 4rem;
+  border: none;
+  border-radius: 2rem;
+  overflow: hidden;
+}
+
+.profile-image__picture {
+  width: 100%;
+}

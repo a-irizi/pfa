@@ -14,8 +14,12 @@ const initialState = [
     email: "johndoe@example.com",
     profile: profile,
     pageLink: "#",
-    type: "professor",
+    type: "student",
+    supervisorId: 3,
+
     previouslyWorkedWith: [3],
+    lastWorkId: 13,
+    status: "valid",
   },
   {
     id: 2,
@@ -25,17 +29,22 @@ const initialState = [
     profile: coauthor1,
     pageLink: "#",
     type: "student",
+    supervisorId: 1,
     previouslyWorkedWith: [4, 5],
+    lastWorkId: 14,
+    status: "rejected",
   },
   {
     id: 3,
     firstName: "Johnaten",
     lastName: "Donaten the third",
-    email: "JohnatenDonaten@example.com",
+    email: "JohnatenDonatenthethird@example.com",
     profile: coauthor2,
     pageLink: "#",
     type: "professor",
     previouslyWorkedWith: [1],
+    lastWorkId: 11,
+    status: "pending",
   },
   {
     id: 4,
@@ -45,7 +54,10 @@ const initialState = [
     profile: coauthor3,
     pageLink: "#",
     type: "student",
+    supervisorId: 3,
     previouslyWorkedWith: [2, 5],
+    lastWorkId: 16,
+    status: "valid",
   },
   {
     id: 5,
@@ -56,6 +68,8 @@ const initialState = [
     pageLink: "#",
     type: "professor",
     previouslyWorkedWith: [2, 4],
+    lastWorkId: 15,
+    status: "valid",
   },
 ];
 
@@ -64,8 +78,6 @@ const researchersSlice = createSlice({
   initialState,
   reducers: {
     updatePreviouslyWorkedWith: (state, { payload }) => {
-      console.log(payload);
-
       for (let i = 0; i < payload.length; i++) {
         const researcher = state.find((r) => r.id === payload[i]);
         const ids = [...payload].filter((id) => id !== researcher.id);
@@ -73,9 +85,33 @@ const researchersSlice = createSlice({
         researcher.previouslyWorkedWith = [...new Set([...ids])];
       }
     },
+    updateLastWork: (state, { payload }) => {
+      const researcher = state.find((r) => r.id === payload.researcherId);
+      researcher.lastWorkId = payload.lastWorkId;
+    },
+    updateResearcher: (state, { payload }) => {
+      console.log("from updateResearcher");
+      console.log(payload);
+      const researcherId = state.findIndex((p) => p.id === payload.id);
+      state.splice(researcherId, 1, payload);
+    },
+    validateResearcher: (state, { payload }) => {
+      const Researcher = state.find((r) => r.id === payload);
+      Researcher.status = "valid";
+    },
+    rejectResearcher: (state, { payload }) => {
+      const Researcher = state.find((r) => r.id === payload);
+      Researcher.status = "rejected";
+    },
   },
 });
 
-export const { updatePreviouslyWorkedWith } = researchersSlice.actions;
+export const {
+  updatePreviouslyWorkedWith,
+  updateLastWork,
+  updateResearcher,
+  validateResearcher,
+  rejectResearcher,
+} = researchersSlice.actions;
 
 export default researchersSlice.reducer;

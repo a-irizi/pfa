@@ -1,69 +1,70 @@
-import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPaper } from "../features/papers/papersSlice";
+import { addPaper, updatePaper } from "../features/papers/papersSlice";
 import {
   updateLastWork,
   updatePreviouslyWorkedWith,
 } from "../features/researchers/researchersSlice";
-
 import "../styles/newPaperModel.css";
 import NewPaperCoauthors from "./NewPaperCoauthors";
 import NewPaperConfirmation from "./NewPaperConfirmation";
 import NewPaperDetails from "./NewPaperDetails";
 import NewPaperFileUploads from "./NewPaperFileUploads";
 
-const NewPaperModal = (props) => {
+const UpdatePaperModal = ({ paperId, closeFunction }) => {
   const dispatch = useDispatch();
+  let paperToUpdate = useSelector((store) =>
+    store.papers.find((p) => p.id === paperId)
+  );
   const userId = useSelector((store) => store.userId);
   const user = useSelector((store) =>
     store.researchers.find((r) => r.id === userId)
   );
   const [generalPaper, setgeneralPaper] = useState({
-    coauthorsId: [],
-    title: "",
-    index: "",
-    type: "",
-    paperFile: null,
+    coauthorsId: paperToUpdate.coauthorsId,
+    title: paperToUpdate.title,
+    index: paperToUpdate.index,
+    type: paperToUpdate.type,
+    paperFile: paperToUpdate.paperFile,
   });
 
   const [revue, setRevue] = useState({
-    publicationYear: null,
-    magazineName: "",
-    magazineNumber: null,
-    magazineVolume: null,
-    startPage: null,
-    endPage: null,
+    publicationYear: paperToUpdate.publicationYear,
+    magazineName: paperToUpdate.magazineName,
+    magazineNumber: paperToUpdate.magazineNumber,
+    magazineVolume: paperToUpdate.magazineVolume,
+    startPage: paperToUpdate.startPage,
+    endPage: paperToUpdate.endPage,
   });
 
   const [chapitre, setChapitre] = useState({
-    publicationYear: null,
-    bookName: "",
-    bookEdition: null,
-    chapterName: null,
-    startPage: null,
-    endPage: null,
+    publicationYear: paperToUpdate.publicationYear,
+    bookName: paperToUpdate.bookName,
+    bookEdition: paperToUpdate.bookEdition,
+    chapterName: paperToUpdate.chapterName,
+    startPage: paperToUpdate.startPage,
+    endPage: paperToUpdate.endPage,
   });
 
   const [communication, setCommunication] = useState({
-    date: null,
-    conferenceName: "",
-    city: null,
-    country: null,
-    startPage: null,
-    endPage: null,
+    date: paperToUpdate.date,
+    conferenceName: paperToUpdate.conferenceName,
+    city: paperToUpdate.city,
+    country: paperToUpdate.country,
+    startPage: paperToUpdate.startPage,
+    endPage: paperToUpdate.endPage,
     cummunicationFile: null,
   });
 
   const [workshop, setWorkshop] = useState({
-    date: null,
-    conferenceName: "",
-    city: null,
-    country: null,
-    startPage: null,
-    endPage: null,
-    workshopFile: null,
+    date: paperToUpdate.date,
+    conferenceName: paperToUpdate.conferenceName,
+    city: paperToUpdate.city,
+    country: paperToUpdate.country,
+    startPage: paperToUpdate.startPage,
+    endPage: paperToUpdate.endPage,
+    workshopFile: paperToUpdate.workshopFile,
   });
 
   function resetNewPaper() {
@@ -182,35 +183,35 @@ const NewPaperModal = (props) => {
     e.preventDefault();
     if (currentStep < steps.length) nextStep();
     else {
-      let newPaper = {
+      paperToUpdate = {
+        ...paperToUpdate,
         ...generalPaper,
         ...(generalPaper.type === "revue" && revue),
         ...(generalPaper.type === "chapitre" && chapitre),
         ...(generalPaper.type === "communication" && communication),
         ...(generalPaper.type === "workshop" && workshop),
       };
-      newPaper.coauthorsId = [...generalPaper.coauthorsId];
+      paperToUpdate.coauthorsId = [...generalPaper.coauthorsId];
 
-      newPaper.authorId = userId;
-      dispatch(addPaper(newPaper));
+      dispatch(updatePaper(paperToUpdate));
       dispatch(
-        updateLastWork({ researcherId: userId, lastWorkId: newPaper.id })
+        updateLastWork({ researcherId: userId, lastWorkId: paperToUpdate.id })
       );
-      for (let i = 0; i < newPaper.coauthorsId.length; i++) {
+      for (let i = 0; i < paperToUpdate.coauthorsId.length; i++) {
         if (
           !user.previouslyWorkedWith.includes(
-            (id) => id === newPaper.coauthorsId[i]
+            (id) => id === paperToUpdate.coauthorsId[i]
           )
         ) {
           dispatch(
-            updatePreviouslyWorkedWith([...newPaper.coauthorsId, userId])
+            updatePreviouslyWorkedWith([...paperToUpdate.coauthorsId, userId])
           );
           break;
         }
       }
 
       resetNewPaper();
-      props.visibilityToggler();
+      closeFunction();
     }
   }
 
@@ -226,7 +227,7 @@ const NewPaperModal = (props) => {
             workshop={workshop}
             changePaper={changePaper}
             resetNewPaper={resetNewPaper}
-            visibilityToggler={props.visibilityToggler}
+            visibilityToggler={closeFunction}
             onSubmit={handleSubmit}
           />
         );
@@ -236,7 +237,7 @@ const NewPaperModal = (props) => {
             generalPaper={generalPaper}
             changePaper={changePaper}
             resetNewPaper={resetNewPaper}
-            visibilityToggler={props.visibilityToggler}
+            visibilityToggler={closeFunction}
             previousStep={previousStep}
             onSubmit={handleSubmit}
           />
@@ -250,7 +251,7 @@ const NewPaperModal = (props) => {
             workshop={workshop}
             changePaper={changePaper}
             resetNewPaper={resetNewPaper}
-            visibilityToggler={props.visibilityToggler}
+            visibilityToggler={closeFunction}
             previousStep={previousStep}
             onSubmit={handleSubmit}
           />
@@ -261,14 +262,10 @@ const NewPaperModal = (props) => {
   }
 
   return (
-    <>
-      {props.isModalVisible && (
-        <div className="overlay">
-          <div className="modal">{renderStep()}</div>
-        </div>
-      )}
-    </>
+    <div className="overlay">
+      <div className="modal">{renderStep()}</div>
+    </div>
   );
 };
 
-export default NewPaperModal;
+export default UpdatePaperModal;

@@ -18,27 +18,31 @@ import PaperCard from "../components/PaperCard";
 import Radio from "../components/Radio";
 import PaperTable from "../components/PaperTable";
 import NewPaperModal from "../components/NewPaperModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import ConfirmActionModal from "../components/ConfirmActionModal";
+import UpdatePaperModal from "../components/UpdatePaperModal";
 
 const Papiers = () => {
-  const papers = useSelector((store) => store.papers);
-  const researchers = useSelector(
-    (store) => store.researchers
+  const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedUser = useSelector((store) =>
+    store.researchers.find((r) => r.id === Number(searchParams.get("userId")))
   );
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const researchers = useSelector((store) => store.researchers);
 
-  function toggleModel() {
-    setIsModalVisible(!isModalVisible);
+  const [isNewPaperModalVisible, setIsNewPaperModalVisible] = useState(false);
+
+  function toggleNewPaperModel() {
+    setIsNewPaperModalVisible((prev) => !prev);
   }
 
   const [filters, setFilters] = useState({
     myPapers: false,
     paperStatus: "any",
-    rejectedPapers: false,
-    inProgressPapers: false,
     authorType: "any",
-    nameOrEmailOrTitle: "",
+    nameOrEmailOrTitle: searchParams.get("userId") ? requestedUser.email : "",
     paperType: "any",
   });
 
@@ -55,10 +59,7 @@ const Papiers = () => {
   }
 
   function checkFilter(paper) {
-    const [ author ] = researchers.filter((r) => (r.id === paper.authorId));
-    const coauthors = researchers.filter((r) =>
-      paper.coauthorsId.includes(r.id)
-    );
+    const author = researchers.find((r) => r.id === paper.authorId);
     return (
       (substring(author.email, filters.nameOrEmailOrTitle) ||
         substring(
@@ -73,9 +74,11 @@ const Papiers = () => {
     );
   }
 
+  const papers = useSelector((store) => store.papers.filter(checkFilter));
+
   const [pageNumber, setPageNumber] = useState(0);
 
-  const elementsPerPage = 6;
+  const elementsPerPage = 12;
   const elementsVisited = pageNumber * elementsPerPage;
   const elementsOnDisplay = papers.slice(
     elementsVisited,
@@ -89,24 +92,60 @@ const Papiers = () => {
     setPageNumber(selected);
   }
 
-  const cards = elementsOnDisplay.map(function (paper) {
-    const [author] = researchers.filter((r) => (r.id === paper.authorId));
-    const coauthors = researchers.filter((r) =>
-      paper.coauthorsId.includes(r.id)
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  function toggleConfirmationModal() {
+    setShowConfirmationModal((prev) => !prev);
+  }
+
+  const [confirmActionModal, setConfirmActionModal] = useState({});
+
+  function confirmAction(action, func, objectId) {
+    toggleConfirmationModal();
+
+    setConfirmActionModal(
+      <ConfirmActionModal
+        action={action}
+        cancelFunc={() => {
+          toggleConfirmationModal();
+          setConfirmActionModal({});
+        }}
+        confirmFunc={() => {
+          dispatch(func(objectId));
+          toggleConfirmationModal();
+          setConfirmActionModal({});
+        }}
+      />
     );
+  }
+
+  const [isUpdatePaperModalVisible, setIsUpdatePaperModalVisible] =
+    useState(false);
+  const [updatePaperModal, setUpdatePaperModal] = useState(<></>);
+  function toggleUpdatePaperModel() {
+    setIsUpdatePaperModalVisible((prev) => !prev);
+  }
+
+  function updatePaper(paperId) {
+    toggleUpdatePaperModel();
+    setUpdatePaperModal(
+      <UpdatePaperModal
+        paperId={paperId}
+        closeFunction={() => {
+          toggleUpdatePaperModel();
+          setUpdatePaperModal(<></>);
+        }}
+      />
+    );
+  }
+
+  const cards = elementsOnDisplay.map(function (paper) {
     return (
       checkFilter(paper) && (
         <PaperCard
-          key={`${paper.id}-${author.id}`}
-          firstName={author.firstName}
-          lastName={author.lastName}
-          profileImage={author.profile}
-          authorPageLink={author.pageLink}
-          type={paper.type}
-          releaseDate={paper.releaseDate}
-          title={paper.title}
-          paperPageLink={paper.pageLink}
-          coauthors={coauthors}
+          key={`${paper.id}-${paper.authorId}`}
+          paper={paper}
+          confirmationFunction={confirmAction}
+          updateFunction={updatePaper}
         />
       )
     );
@@ -136,7 +175,16 @@ const Papiers = () => {
   }
 
   return (
-    <main>
+    <main
+      style={{
+        display: "grid",
+        gridTemplateAreas: '"top top" "filters content"',
+        gap: "1.25rem",
+        gridTemplateColumns: "12.375rem 1fr",
+      }}
+    >
+      {isUpdatePaperModalVisible && updatePaperModal}
+      {showConfirmationModal && confirmActionModal}
       <div className="top container container--center container--space-between">
         <div className="layout-buttons">
           <button
@@ -174,12 +222,12 @@ const Papiers = () => {
           value={filters.nameOrEmailOrTitle}
           onChange={changeFilter}
         />
-        <button onClick={toggleModel} className="new-paper-button">
+        <button onClick={toggleNewPaperModel} className="new-paper-button">
           +
         </button>
         <NewPaperModal
-          isModalVisible={isModalVisible}
-          visibilityToggler={toggleModel}
+          isModalVisible={isNewPaperModalVisible}
+          visibilityToggler={toggleNewPaperModel}
         />
       </div>
       <div className="filters container container--top container--space-between">
@@ -204,11 +252,11 @@ const Papiers = () => {
               label="Tous"
             />
             <Radio
-              key="paperStatusValide"
-              id="paper-status-valide"
+              key="paperStatusvalid"
+              id="paper-status-valid"
               name="paperStatus"
               onChange={changeFilter}
-              value="valide"
+              value="valid"
               checkeString={filters.paperStatus}
               label="Validé"
             />
@@ -282,7 +330,7 @@ const Papiers = () => {
               label="Revue"
             />
             <Radio
-              key="paperTypeRevue"
+              key="paperTypeChapitre"
               id="paper-type-chapitre"
               name="paperType"
               onChange={changeFilter}

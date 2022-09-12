@@ -11,6 +11,10 @@ const NewPaperFileUploads = ({
   previousStep,
   onSubmit,
 }) => {
+  console.log(communication.cummunicationFile);
+  console.log(
+    communication.cummunicationFile != null || workshop.workshopFile != null
+  );
   const firstFile = (
     <div
       style={{
@@ -222,7 +226,7 @@ const NewPaperFileUploads = ({
     );
 
   return (
-    <form onSubmit={onSubmit}>
+    <form encType="multipart/form-data" onSubmit={onSubmit}>
       <div
         className="modal__input"
         style={{ display: "flex", justifyContent: "center", gap: "2rem" }}
@@ -265,7 +269,7 @@ const NewPaperFileUploads = ({
             }}
           >
             {secondFile}
-            {(communication.communicationFile != null ||
+            {(communication.cummunicationFile != null ||
               workshop.workshopFile != null) && (
               <div
                 style={{
@@ -296,14 +300,13 @@ const NewPaperFileUploads = ({
       </div>
       <div className="modal__buttons">
         <div style={{ display: "flex", gap: ".5rem" }}>
-          <button
-            className="modal__button"
-            onClick={previousStep}
-          >
+          <button className="modal__button" onClick={previousStep}>
             precedent
           </button>
-          <button type="submit" className="modal__button modal__button--confirm" >
-
+          <button
+            type="submit"
+            className="modal__button modal__button--confirm"
+          >
             Confirmer
           </button>
         </div>
