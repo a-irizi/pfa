@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -14,6 +14,9 @@ const ProfileUpdate = (props) => {
     useSelector((store) => store.researchers.find((r) => r.id === userId))
   );
 
+  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(user.profile);
+
   function handleChange(e) {
     const { name, value, type, files } = e.target;
     setUser((old) => ({
@@ -21,9 +24,31 @@ const ProfileUpdate = (props) => {
       [name]: type === "file" ? files[0] : value,
     }));
   }
+
+  function handleImageChange(e) {
+    e.preventDefault();
+    setImage(e.target.files[0]);
+  }
+
+  useEffect(() => {
+    const extensionExtractor = /(?:\.([^.]+))?$/;
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      const { result } = e.target;
+      setImageFile(result);
+    };
+    if (image !== null) {
+      fileReader.readAsDataURL(image);
+    }
+
+    return () => {
+      fileReader.abort();
+    };
+  }, [image]);
+
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(updateResearcher({ ...user }));
+    dispatch(updateResearcher({ ...user, profile: imageFile }));
     navigate("/profile");
   }
 
@@ -32,9 +57,9 @@ const ProfileUpdate = (props) => {
       <form encType="multipart/form-data">
         <div>
           <div className="profile-image__container">
-            <img className="profile-image__picture" src={user.profile} alt="" />
+            <img className="profile-image__picture" src={imageFile} alt="" />
+            <input type="file" name="profile" onChange={handleImageChange} />
           </div>
-          <input type="file" name="profile" onChange={handleChange} />
         </div>
         <div>
           <label htmlFor="firstName-id">Prenom</label>
@@ -53,16 +78,6 @@ const ProfileUpdate = (props) => {
             type="text"
             name="lastName"
             value={user.lastName}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="email-id">email</label>
-          <input
-            id="email-id"
-            type="email"
-            name="email"
-            value={user.email}
             onChange={handleChange}
           />
         </div>
